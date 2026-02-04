@@ -1,6 +1,6 @@
 # crazy-alerts
 
-macOS-only CLI: show an **ambulance-style alert** (🚑 message + 🚨) or **full-screen confetti** from the terminal. Uses native Swift overlays; works during screen sharing.
+macOS-only CLI: show an **ambulance-style alert** (🚑 message + animated siren) or **full-screen confetti** from the terminal. Uses native Swift overlays; works during screen sharing.
 
 ## Install
 
@@ -12,7 +12,7 @@ npm install -g crazy-alerts
 
 ### `ambulance`
 
-Shows a moving ambulance + message at the bottom of the screen.
+Shows a moving ambulance + message at the bottom of the screen, with an animated siren GIF (and a copy in the top-right corner). An alarm sound plays for the duration (system sound or optional `assets/alarm.wav`).
 
 ```bash
 ambulance "Test failed"
@@ -21,7 +21,7 @@ ambulance "Build failed"
 AMBULANCE_MESSAGE="Deploy done" ambulance
 ```
 
-Optional env: `AMBULANCE_DURATION`, `AMBULANCE_FONT_SIZE`, `AMBULANCE_BORDER_INSET`.
+Optional env: `AMBULANCE_DURATION`, `AMBULANCE_FONT_SIZE`, `AMBULANCE_BORDER_INSET`, `AMBULANCE_ASSETS_DIR`. Assets (siren GIF, optional alarm) live in `assets/` and are included in the package.
 
 ### `confetti`
 
