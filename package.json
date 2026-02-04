@@ -1,6 +1,6 @@
 {
   "name": "crazy-alerts",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "description": "macOS-only CLI: ambulance-style alert overlay and full-screen confetti. Run from terminal or CI.",
   "keywords": [
     "cli",

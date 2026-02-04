@@ -29,11 +29,14 @@ Full-screen confetti celebration.
 
 ```bash
 confetti
-# optional env
+# inline overrides (override env and defaults)
+confetti --particle-count=500 --duration=10
+confetti -c 500 -d 8 --gravity=0.3
+# or env
 CONFETTI_PARTICLE_COUNT=500 CONFETTI_DURATION=10 confetti
 ```
 
-Optional env: `CONFETTI_PARTICLE_COUNT`, `CONFETTI_DURATION`, `CONFETTI_GRAVITY`, `CONFETTI_VELOCITY`, `CONFETTI_SIZE_MIN`, `CONFETTI_SIZE_MAX`, `CONFETTI_SPAWN_RATE`.
+Optional **inline flags**: `--particle-count` / `-c`, `--duration` / `-d`, `--gravity` / `-g`, `--velocity` / `-v`, `--size-min`, `--size-max`, `--spawn-rate` / `-r`. Optional **env**: `CONFETTI_PARTICLE_COUNT`, `CONFETTI_DURATION`, `CONFETTI_GRAVITY`, `CONFETTI_VELOCITY`, `CONFETTI_SIZE_MIN`, `CONFETTI_SIZE_MAX`, `CONFETTI_SPAWN_RATE`. Inline args override env; env overrides defaults.
 
 ## Requirements
 
