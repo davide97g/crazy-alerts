@@ -1,6 +1,6 @@
 # crazy-alerts
 
-macOS-only CLI: show **ambulance**, **siren**, **confetti**, **checkmark**, **countdown**, or **fire** overlays from the terminal. Uses native Swift; works during screen sharing.
+macOS-only CLI: 20 overlay alerts from the terminal. Uses native Swift; works during screen sharing.
 
 ## Install
 
@@ -82,6 +82,27 @@ FIRE_DURATION=12 fire "Server down"
 ```
 
 Optional env: `FIRE_MESSAGE`, `FIRE_DURATION`, `FIRE_PARTICLE_COUNT`, `FIRE_FONT_SIZE`, `FIRE_ASSETS_DIR`.
+
+### More alerts
+
+| Command | Description | Example |
+|--------|-------------|--------|
+| `klaxon` | Red/black flash + short beeps | `klaxon "Stop!"` |
+| `danger` | Dark overlay + ⚠️ (or 💀) + message, alarm | `danger "P0"` |
+| `strobe` | White/red alternating flash | `strobe "Alert"` |
+| `rocket` | 🚀 moving up + message, success sound | `rocket "Shipped!"` |
+| `clap` | 👏 + “Well done”, success sound | `clap` |
+| `rainbow` | Slow rainbow gradient + message | `rainbow "All green"` |
+| `banner` | Scrolling ticker (top/bottom) | `banner "Build in progress..."` |
+| `pill` | Small centered pill badge | `pill "Deploy started"` |
+| `dnd` | Dim overlay + “Do not disturb” (stays until killed if duration=0) | `dnd "In a meeting"` |
+| `pomodoro` | “Time for a break” + ☕, gentle sound | `pomodoro` |
+| `reminder` | Big message only, optional sound | `reminder "Drink water"` |
+| `typewriter` | Message types out with cursor, beep at end | `typewriter "Done."` |
+| `matrix` | Falling green characters + optional message | `matrix "Build..."` |
+| `explosion` | Single burst from center + optional message | `explosion "Merge to main"` |
+
+Each supports env vars (e.g. `*_MESSAGE`, `*_DURATION`, `*_FONT_SIZE`); see USAGE.md.
 
 ## Requirements
 

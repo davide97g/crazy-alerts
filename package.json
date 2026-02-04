@@ -1,7 +1,7 @@
 {
   "name": "crazy-alerts",
   "version": "1.3.0",
-  "description": "macOS-only CLI: ambulance, siren, confetti, checkmark, countdown, and fire overlays. Run from terminal or CI.",
+  "description": "macOS-only CLI: 20 overlay alerts (ambulance, siren, confetti, checkmark, countdown, fire, klaxon, danger, strobe, rocket, clap, rainbow, banner, pill, dnd, pomodoro, reminder, typewriter, matrix, explosion). Run from terminal or CI.",
   "keywords": [
     "cli",
     "macos",
@@ -11,7 +11,10 @@
     "overlay",
     "siren",
     "countdown",
-    "fire"
+    "fire",
+    "klaxon",
+    "matrix",
+    "typewriter"
   ],
   "license": "MIT",
   "bin": {
@@ -20,7 +23,21 @@
     "siren": "./scripts/siren-run.js",
     "checkmark": "./scripts/checkmark-run.js",
     "countdown": "./scripts/countdown-run.js",
-    "fire": "./scripts/fire-run.js"
+    "fire": "./scripts/fire-run.js",
+    "klaxon": "./scripts/klaxon-run.js",
+    "danger": "./scripts/danger-run.js",
+    "strobe": "./scripts/strobe-run.js",
+    "rocket": "./scripts/rocket-run.js",
+    "clap": "./scripts/clap-run.js",
+    "rainbow": "./scripts/rainbow-run.js",
+    "banner": "./scripts/banner-run.js",
+    "pill": "./scripts/pill-run.js",
+    "dnd": "./scripts/dnd-run.js",
+    "pomodoro": "./scripts/pomodoro-run.js",
+    "reminder": "./scripts/reminder-run.js",
+    "typewriter": "./scripts/typewriter-run.js",
+    "matrix": "./scripts/matrix-run.js",
+    "explosion": "./scripts/explosion-run.js"
   },
   "scripts": {
     "ambulance": "node scripts/ambulance-run.js",
@@ -28,7 +45,21 @@
     "siren": "node scripts/siren-run.js",
     "checkmark": "node scripts/checkmark-run.js",
     "countdown": "node scripts/countdown-run.js",
-    "fire": "node scripts/fire-run.js"
+    "fire": "node scripts/fire-run.js",
+    "klaxon": "node scripts/klaxon-run.js",
+    "danger": "node scripts/danger-run.js",
+    "strobe": "node scripts/strobe-run.js",
+    "rocket": "node scripts/rocket-run.js",
+    "clap": "node scripts/clap-run.js",
+    "rainbow": "node scripts/rainbow-run.js",
+    "banner": "node scripts/banner-run.js",
+    "pill": "node scripts/pill-run.js",
+    "dnd": "node scripts/dnd-run.js",
+    "pomodoro": "node scripts/pomodoro-run.js",
+    "reminder": "node scripts/reminder-run.js",
+    "typewriter": "node scripts/typewriter-run.js",
+    "matrix": "node scripts/matrix-run.js",
+    "explosion": "node scripts/explosion-run.js"
   },
   "files": [
     "scripts",
