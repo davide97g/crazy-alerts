@@ -13,7 +13,11 @@
 # =============================================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 SWIFT_FILE="$SCRIPT_DIR/ambulance.swift"
+
+# Assets (siren GIF, optional alarm.wav) - so script works from any CWD
+export AMBULANCE_ASSETS_DIR="${AMBULANCE_ASSETS_DIR:-$PROJECT_ROOT/assets}"
 
 # Message: first argument, or env, or default (🚨 is added at the end by the script)
 export AMBULANCE_MESSAGE="${AMBULANCE_MESSAGE:-${1:-Test CNT-T5431 failedddddddddddd 🙊}}"

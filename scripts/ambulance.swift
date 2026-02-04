@@ -1,6 +1,7 @@
 #!/usr/bin/env swift
 
 import Cocoa
+import ImageIO
 
 // MARK: - Configuration (from environment variables)
 struct AmbulanceConfig {
@@ -11,6 +12,66 @@ struct AmbulanceConfig {
     static let duration = Double(ProcessInfo.processInfo.environment["AMBULANCE_DURATION"] ?? "14") ?? 14
     static let fontSize = CGFloat(Double(ProcessInfo.processInfo.environment["AMBULANCE_FONT_SIZE"] ?? "20") ?? 20)
     static let borderInset = CGFloat(Double(ProcessInfo.processInfo.environment["AMBULANCE_BORDER_INSET"] ?? "12") ?? 12)
+
+    /// Assets directory: env AMBULANCE_ASSETS_DIR, or ./assets relative to current directory
+    static let assetsDir: String = {
+        if let dir = ProcessInfo.processInfo.environment["AMBULANCE_ASSETS_DIR"], !dir.isEmpty { return dir }
+        return FileManager.default.currentDirectoryPath + "/assets"
+    }()
+}
+
+// MARK: - Animated GIF (frame-by-frame via ImageIO)
+final class AnimatedGIF {
+    private var frames: [NSImage] = []
+    private var frameDelays: [TimeInterval] = []
+    private var currentFrameIndex: Int = 0
+    private var accumulatedTime: TimeInterval = 0
+    var displaySize: NSSize = NSSize(width: 28, height: 28)
+
+    static func load(path: String) -> AnimatedGIF? {
+        let url = URL(fileURLWithPath: path)
+        guard let source = CGImageSourceCreateWithURL(url as CFURL, nil) else { return nil }
+        let count = CGImageSourceGetCount(source)
+        guard count > 0 else { return nil }
+        let gif = AnimatedGIF()
+        for i in 0..<count {
+            guard let cgImage = CGImageSourceCreateImageAtIndex(source, i, nil) else { continue }
+            gif.frames.append(NSImage(cgImage: cgImage, size: NSSize(width: cgImage.width, height: cgImage.height)))
+            let delay = Self.frameDelay(at: i, source: source)
+            gif.frameDelays.append(delay)
+        }
+        if gif.frames.isEmpty { return nil }
+        return gif
+    }
+
+    private static func frameDelay(at index: Int, source: CGImageSource) -> TimeInterval {
+        guard let props = CGImageSourceCopyPropertiesAtIndex(source, index, nil) as? [String: Any],
+              let gifProps = props[kCGImagePropertyGIFDictionary as String] as? [String: Any] else {
+            return 0.1
+        }
+        if let unclamped = gifProps[kCGImagePropertyGIFUnclampedDelayTime as String] as? Double, unclamped > 0 {
+            return unclamped
+        }
+        if let delay = gifProps[kCGImagePropertyGIFDelayTime as String] as? Double {
+            return delay > 0 ? delay : 0.1
+        }
+        return 0.1
+    }
+
+    func advance(delta: TimeInterval) {
+        guard frames.count > 1, frameDelays.count == frames.count else { return }
+        accumulatedTime += delta
+        let delay = frameDelays[currentFrameIndex]
+        if accumulatedTime >= delay {
+            accumulatedTime -= delay
+            currentFrameIndex = (currentFrameIndex + 1) % frames.count
+        }
+    }
+
+    var currentImage: NSImage? {
+        guard currentFrameIndex < frames.count else { return frames.first }
+        return frames[currentFrameIndex]
+    }
 }
 
 /// Prefer a cooler font; fallback to system bold.
@@ -21,17 +82,21 @@ private func ambulanceFont(size: CGFloat) -> NSFont {
         ?? NSFont.boldSystemFont(ofSize: size)
 }
 
-// MARK: - Ambulance View (emoji + red text + siren + screen border)
+// MARK: - Ambulance View (emoji + red text + siren image + screen border + alarm sound)
 class AmbulanceView: NSView {
     var contentWidth: CGFloat = 0
+    var textWidth: CGFloat = 0
     var currentX: CGFloat = 0
     var speed: CGFloat = 0
     var timer: Timer?
     var pulsePhase: CGFloat = 0
     let message: String
     var attributedLine: NSAttributedString?
-    /// Same content as attributedLine but all black, for outline/stroke
     var outlineLine: NSAttributedString?
+    var sirenGIF: AnimatedGIF?
+    let sirenGap: CGFloat = 6
+    let sirenDisplaySize = NSSize(width: 28, height: 28)
+    var alarmSound: NSSound?
 
     init(frame: NSRect, message: String) {
         self.message = message
@@ -49,22 +114,41 @@ class AmbulanceView: NSView {
         let line = NSMutableAttributedString()
         line.append(NSAttributedString(string: "🚑 ", attributes: [.font: font, .foregroundColor: white]))
         line.append(NSAttributedString(string: message, attributes: [.font: font, .foregroundColor: red]))
-        line.append(NSAttributedString(string: " 🚨", attributes: [.font: font, .foregroundColor: white]))
         attributedLine = line
 
         let outline = NSMutableAttributedString()
         outline.append(NSAttributedString(string: "🚑 ", attributes: [.font: font, .foregroundColor: black]))
         outline.append(NSAttributedString(string: message, attributes: [.font: font, .foregroundColor: black]))
-        outline.append(NSAttributedString(string: " 🚨", attributes: [.font: font, .foregroundColor: black]))
         outlineLine = outline
 
-        contentWidth = line.size().width
+        textWidth = line.size().width
+        let sirenWidth = sirenGap + sirenDisplaySize.width
+        contentWidth = textWidth + sirenWidth
+
+        let sirenPath = (AmbulanceConfig.assetsDir as NSString).appendingPathComponent("alert.gif")
+        sirenGIF = AnimatedGIF.load(path: sirenPath)
+        sirenGIF?.displaySize = sirenDisplaySize
 
         let totalDistance = bounds.width + contentWidth * 2
         speed = totalDistance / CGFloat(AmbulanceConfig.duration * 60)
         currentX = bounds.width + contentWidth
 
+        startAlarmSound()
         startTimer()
+    }
+
+    static var sharedAlarmSound: NSSound?
+
+    private func startAlarmSound() {
+        let soundPath = (AmbulanceConfig.assetsDir as NSString).appendingPathComponent("alarm.wav")
+        if FileManager.default.fileExists(atPath: soundPath), let sound = NSSound(contentsOfFile: soundPath, byReference: false) {
+            alarmSound = sound
+        } else {
+            alarmSound = NSSound(named: "Glass")
+        }
+        alarmSound?.loops = true
+        alarmSound?.play()
+        AmbulanceView.sharedAlarmSound = alarmSound
     }
 
     func startTimer() {
@@ -77,6 +161,7 @@ class AmbulanceView: NSView {
     func tick() {
         currentX -= speed
         pulsePhase += 0.14
+        sirenGIF?.advance(delta: 1.0 / 60.0)
         setNeedsDisplay(bounds)
     }
 
@@ -90,7 +175,8 @@ class AmbulanceView: NSView {
 
         let bottomMargin: CGFloat = 28
         let baselineY = bottomMargin
-        let drawRect = NSRect(x: currentX, y: baselineY, width: contentWidth, height: line.size().height)
+        let lineHeight = line.size().height
+        let textDrawRect = NSRect(x: currentX, y: baselineY, width: textWidth, height: lineHeight)
 
         let strokeOffset: CGFloat = 1
         let offsets: [(CGFloat, CGFloat)] = [
@@ -98,7 +184,7 @@ class AmbulanceView: NSView {
             (-strokeOffset, -strokeOffset), (-strokeOffset, strokeOffset), (strokeOffset, -strokeOffset), (strokeOffset, strokeOffset),
         ]
         for (dx, dy) in offsets {
-            let strokeRect = NSRect(x: drawRect.minX + dx, y: drawRect.minY + dy, width: drawRect.width, height: drawRect.height)
+            let strokeRect = NSRect(x: textDrawRect.minX + dx, y: textDrawRect.minY + dy, width: textDrawRect.width, height: textDrawRect.height)
             outline.draw(in: strokeRect)
         }
 
@@ -109,8 +195,21 @@ class AmbulanceView: NSView {
         glow.shadowOffset = NSSize(width: 0, height: 0)
         glow.shadowBlurRadius = 16
         glow.set()
-        line.draw(in: drawRect)
+        line.draw(in: textDrawRect)
         ctx?.restoreGState()
+
+        let sirenY = baselineY + (lineHeight - sirenDisplaySize.height) / 2
+        let scrollingSirenRect = NSRect(x: currentX + textWidth + sirenGap, y: sirenY, width: sirenDisplaySize.width, height: sirenDisplaySize.height)
+        drawSiren(in: scrollingSirenRect)
+
+        let topRightInset: CGFloat = 24
+        let cornerSirenRect = NSRect(x: bounds.maxX - sirenDisplaySize.width - topRightInset, y: bounds.maxY - sirenDisplaySize.height - topRightInset, width: sirenDisplaySize.width, height: sirenDisplaySize.height)
+        drawSiren(in: cornerSirenRect)
+    }
+
+    private func drawSiren(in rect: NSRect) {
+        guard let gif = sirenGIF, let image = gif.currentImage else { return }
+        image.draw(in: rect, from: NSRect(origin: .zero, size: image.size), operation: .sourceOver, fraction: 1)
     }
 
     private func drawGlowingScreenBorder() {
@@ -181,6 +280,9 @@ for screen in NSScreen.screens {
     view.startAnimation()
 }
 
-DispatchQueue.main.asyncAfter(deadline: .now() + AmbulanceConfig.duration) { NSApp.terminate(nil) }
+DispatchQueue.main.asyncAfter(deadline: .now() + AmbulanceConfig.duration) {
+    AmbulanceView.sharedAlarmSound?.stop()
+    NSApp.terminate(nil)
+}
 
 app.run()

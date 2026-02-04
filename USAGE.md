@@ -34,6 +34,9 @@ ambulance [message]
 | `AMBULANCE_DURATION` | `14` | How long the overlay stays (seconds). |
 | `AMBULANCE_FONT_SIZE` | `20` | Font size of the message. |
 | `AMBULANCE_BORDER_INSET` | `12` | Border/inset (pixels). |
+| `AMBULANCE_ASSETS_DIR` | `./assets` (or project `assets/` when run via script) | Folder for `alert.gif` (siren) and optional `alarm.wav`. |
+
+**Assets:** Place `alert.gif` (siren) in the `assets/` folder at the project root. An alarm sound plays for the duration: add `alarm.wav` in `assets/` for a custom siren; otherwise the system “Glass” sound is used.
 
 **Examples:**
 
