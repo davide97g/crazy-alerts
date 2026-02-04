@@ -1,6 +1,6 @@
 # crazy-alerts — Usage reference for LLMs
 
-**crazy-alerts** is a macOS-only CLI that shows overlay alerts from the terminal: an ambulance-style message bar or full-screen confetti. Overlays are native Swift; they work during screen sharing. Requires Node.js ≥14 and Swift (Xcode / Xcode Command Line Tools).
+**crazy-alerts** is a macOS-only CLI that shows overlay alerts from the terminal: ambulance, siren, confetti, checkmark, countdown, and fire. Overlays are native Swift; they work during screen sharing. Requires Node.js ≥14 and Swift (Xcode / Xcode Command Line Tools).
 
 ---
 
@@ -10,7 +10,7 @@
 npm install -g crazy-alerts
 ```
 
-After install, the `ambulance` and `confetti` commands are available globally.
+After install, `ambulance`, `confetti`, `siren`, `checkmark`, `countdown`, and `fire` are available globally.
 
 ---
 
@@ -98,6 +98,46 @@ confetti --duration=12 -r 100
 
 ---
 
+## Command: `siren`
+
+Full-screen red pulsing alert with optional message and looping alarm.
+
+**Invocation:** `siren [message]`
+
+**Env:** `SIREN_MESSAGE`, `SIREN_DURATION` (default 10), `SIREN_FONT_SIZE`, `SIREN_ASSETS_DIR`. Uses `assets/alarm.wav` or system "Glass".
+
+---
+
+## Command: `checkmark`
+
+Big green checkmark with optional message and success sound.
+
+**Invocation:** `checkmark [message]`
+
+**Env:** `CHECKMARK_MESSAGE`, `CHECKMARK_DURATION` (default 4), `CHECKMARK_FONT_SIZE`, `CHECKMARK_ASSETS_DIR`. Success: `assets/success.wav` or "Hero".
+
+---
+
+## Command: `countdown`
+
+Full-screen countdown (e.g. 5, 4, 3, 2, 1, Go!).
+
+**Invocation:** `countdown [start] [message]` — if first arg is a number it's the start value; optional second arg is message. Or `countdown "message"` (start=5).
+
+**Env:** `COUNTDOWN_START` (default 5), `COUNTDOWN_MESSAGE`, `COUNTDOWN_DURATION_AFTER_ZERO`, `COUNTDOWN_SOUND_AT_ZERO`, `COUNTDOWN_FONT_SIZE`, `COUNTDOWN_ASSETS_DIR`.
+
+---
+
+## Command: `fire`
+
+Full-screen flame effect with message.
+
+**Invocation:** `fire [message]`
+
+**Env:** `FIRE_MESSAGE`, `FIRE_DURATION` (default 8), `FIRE_PARTICLE_COUNT`, `FIRE_FONT_SIZE`, `FIRE_ASSETS_DIR`.
+
+---
+
 ## Running without global install
 
 From the project directory:
@@ -105,6 +145,10 @@ From the project directory:
 ```bash
 node scripts/ambulance-run.js "Your message"
 node scripts/confetti-run.js --duration=8
+node scripts/siren-run.js "Alert"
+node scripts/checkmark-run.js "Done"
+node scripts/countdown-run.js 5 "Launch"
+node scripts/fire-run.js "Deploy failed"
 npm run ambulance -- "Your message"
 npm run confetti -- --particle-count=400
 ```
@@ -113,6 +157,10 @@ npm run confetti -- --particle-count=400
 
 ## Summary for LLMs
 
-- **ambulance**: `ambulance [message]`; optional env: `AMBULANCE_MESSAGE`, `AMBULANCE_DURATION`, `AMBULANCE_FONT_SIZE`, `AMBULANCE_BORDER_INSET`.
-- **confetti**: `confetti` with optional `--particle-count`/`-c`, `--duration`/`-d`, `--gravity`/`-g`, `--velocity`/`-v`, `--size-min`, `--size-max`, `--spawn-rate`/`-r` (or same as env vars). Inline flags override env.
+- **ambulance**: `ambulance [message]`; env: `AMBULANCE_MESSAGE`, `AMBULANCE_DURATION`, `AMBULANCE_FONT_SIZE`, `AMBULANCE_BORDER_INSET`, `AMBULANCE_ASSETS_DIR`.
+- **confetti**: `confetti` with optional `--particle-count`/`-c`, `--duration`/`-d`, etc.; inline flags override env.
+- **siren**: `siren [message]`; env: `SIREN_MESSAGE`, `SIREN_DURATION`, `SIREN_FONT_SIZE`, `SIREN_ASSETS_DIR`.
+- **checkmark**: `checkmark [message]`; env: `CHECKMARK_MESSAGE`, `CHECKMARK_DURATION`, `CHECKMARK_FONT_SIZE`, `CHECKMARK_ASSETS_DIR`.
+- **countdown**: `countdown [start] [message]`; env: `COUNTDOWN_START`, `COUNTDOWN_MESSAGE`, `COUNTDOWN_DURATION_AFTER_ZERO`, `COUNTDOWN_SOUND_AT_ZERO`, etc.
+- **fire**: `fire [message]`; env: `FIRE_MESSAGE`, `FIRE_DURATION`, `FIRE_PARTICLE_COUNT`, `FIRE_FONT_SIZE`, `FIRE_ASSETS_DIR`.
 - macOS only; Node ≥14; Swift required.

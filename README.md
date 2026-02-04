@@ -1,6 +1,6 @@
 # crazy-alerts
 
-macOS-only CLI: show an **ambulance-style alert** (🚑 message + animated siren) or **full-screen confetti** from the terminal. Uses native Swift overlays; works during screen sharing.
+macOS-only CLI: show **ambulance**, **siren**, **confetti**, **checkmark**, **countdown**, or **fire** overlays from the terminal. Uses native Swift; works during screen sharing.
 
 ## Install
 
@@ -36,7 +36,52 @@ confetti -c 500 -d 8 --gravity=0.3
 CONFETTI_PARTICLE_COUNT=500 CONFETTI_DURATION=10 confetti
 ```
 
-Optional **inline flags**: `--particle-count` / `-c`, `--duration` / `-d`, `--gravity` / `-g`, `--velocity` / `-v`, `--size-min`, `--size-max`, `--spawn-rate` / `-r`. Optional **env**: `CONFETTI_PARTICLE_COUNT`, `CONFETTI_DURATION`, `CONFETTI_GRAVITY`, `CONFETTI_VELOCITY`, `CONFETTI_SIZE_MIN`, `CONFETTI_SIZE_MAX`, `CONFETTI_SPAWN_RATE`. Inline args override env; env overrides defaults.
+Optional **inline flags**: `--particle-count` / `-c`, `--duration` / `-d`, `--gravity` / `-g`, `--velocity` / `-v`, `--size-min`, `--size-max`, `--spawn-rate` / `-r`. Optional **env**: same names. Inline args override env.
+
+### `siren`
+
+Full-screen red pulsing alert with optional message and looping alarm sound.
+
+```bash
+siren "Server down"
+SIREN_DURATION=15 siren "Critical"
+```
+
+Optional env: `SIREN_MESSAGE`, `SIREN_DURATION`, `SIREN_FONT_SIZE`, `SIREN_ASSETS_DIR`. Uses `assets/alarm.wav` if present, else system "Glass".
+
+### `checkmark`
+
+Big green checkmark with optional message and success sound.
+
+```bash
+checkmark "Build passed"
+CHECKMARK_DURATION=6 checkmark "Deploy done"
+```
+
+Optional env: `CHECKMARK_MESSAGE`, `CHECKMARK_DURATION`, `CHECKMARK_FONT_SIZE`, `CHECKMARK_ASSETS_DIR`. Success sound: `assets/success.wav` or "Hero".
+
+### `countdown`
+
+Full-screen countdown (e.g. 5, 4, 3, 2, 1, Go!) with optional message and sound at zero.
+
+```bash
+countdown
+countdown 10
+countdown 5 "Launch in..."
+```
+
+Optional env: `COUNTDOWN_START`, `COUNTDOWN_MESSAGE`, `COUNTDOWN_DURATION_AFTER_ZERO`, `COUNTDOWN_SOUND_AT_ZERO`, `COUNTDOWN_FONT_SIZE`, `COUNTDOWN_ASSETS_DIR`.
+
+### `fire`
+
+Full-screen flame effect with message (failure / drama alert).
+
+```bash
+fire "Deploy failed"
+FIRE_DURATION=12 fire "Server down"
+```
+
+Optional env: `FIRE_MESSAGE`, `FIRE_DURATION`, `FIRE_PARTICLE_COUNT`, `FIRE_FONT_SIZE`, `FIRE_ASSETS_DIR`.
 
 ## Requirements
 
