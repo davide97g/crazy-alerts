@@ -1,0 +1,31 @@
+{
+  "name": "crazy-alerts",
+  "version": "1.0.0",
+  "description": "macOS-only CLI: ambulance-style alert overlay and full-screen confetti. Run from terminal or CI.",
+  "keywords": [
+    "cli",
+    "macos",
+    "alerts",
+    "confetti",
+    "notification",
+    "overlay"
+  ],
+  "license": "MIT",
+  "bin": {
+    "ambulance": "./scripts/ambulance-run.js",
+    "confetti": "./scripts/confetti-run.js"
+  },
+  "scripts": {
+    "ambulance": "node scripts/ambulance-run.js",
+    "confetti": "node scripts/confetti-run.js"
+  },
+  "files": [
+    "scripts"
+  ],
+  "engines": {
+    "node": ">=14"
+  },
+  "os": [
+    "darwin"
+  ]
+}
