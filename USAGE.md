@@ -73,7 +73,7 @@ confetti [options]
 
 **Environment variables** (optional; overridden by inline flags):
 
-Same as above: `CONFETTI_PARTICLE_COUNT`, `CONFETTI_DURATION`, `CONFETTI_GRAVITY`, `CONFETTI_VELOCITY`, `CONFETTI_SIZE_MIN`, `CONFETTI_SIZE_MAX`, `CONFETTI_SPAWN_RATE`.
+Same as above, plus `CONFETTI_ASSETS_DIR` (default: project `assets/` when run via script). A success sound plays once at start: add `success.wav` in `assets/` for a custom sound; otherwise the system “Hero” sound is used.
 
 **Precedence:** inline args > environment > defaults.
 

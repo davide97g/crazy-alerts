@@ -36,7 +36,9 @@ export CONFETTI_SPAWN_RATE="${CONFETTI_SPAWN_RATE:-70}"
 # --------------------------------
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 SWIFT_FILE="$SCRIPT_DIR/confetti.swift"
+export CONFETTI_ASSETS_DIR="${CONFETTI_ASSETS_DIR:-$PROJECT_ROOT/assets}"
 
 # Check if we're on macOS
 if [[ "$(uname)" != "Darwin" ]]; then

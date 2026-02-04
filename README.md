@@ -25,7 +25,7 @@ Optional env: `AMBULANCE_DURATION`, `AMBULANCE_FONT_SIZE`, `AMBULANCE_BORDER_INS
 
 ### `confetti`
 
-Full-screen confetti celebration.
+Full-screen confetti celebration with a success sound (system “Hero” or optional `assets/success.wav`).
 
 ```bash
 confetti

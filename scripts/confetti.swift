@@ -11,6 +11,11 @@ struct Config {
     static let sizeMin = CGFloat(Double(ProcessInfo.processInfo.environment["CONFETTI_SIZE_MIN"] ?? "8") ?? 8)
     static let sizeMax = CGFloat(Double(ProcessInfo.processInfo.environment["CONFETTI_SIZE_MAX"] ?? "16") ?? 16)
     static let spawnRate = Int(ProcessInfo.processInfo.environment["CONFETTI_SPAWN_RATE"] ?? "30") ?? 30
+
+    static let assetsDir: String = {
+        if let dir = ProcessInfo.processInfo.environment["CONFETTI_ASSETS_DIR"], !dir.isEmpty { return dir }
+        return FileManager.default.currentDirectoryPath + "/assets"
+    }()
 }
 
 // MARK: - Particle
@@ -147,7 +152,20 @@ for screen in NSScreen.screens {
     windows.append(window)
 }
 
+// Success sound (play once at start; optional custom file in assets)
+let successSound: NSSound? = {
+    let wav = (Config.assetsDir as NSString).appendingPathComponent("success.wav")
+    if FileManager.default.fileExists(atPath: wav), let s = NSSound(contentsOfFile: wav, byReference: false) {
+        return s
+    }
+    return NSSound(named: "Hero")
+}()
+successSound?.play()
+
 // Auto-close safety
-DispatchQueue.main.asyncAfter(deadline: .now() + Config.duration) { NSApp.terminate(nil) }
+DispatchQueue.main.asyncAfter(deadline: .now() + Config.duration) {
+    successSound?.stop()
+    NSApp.terminate(nil)
+}
 
 app.run()

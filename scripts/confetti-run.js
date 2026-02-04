@@ -58,7 +58,9 @@ if (process.platform !== 'darwin') {
 }
 
 const scriptDir = __dirname;
+const projectRoot = path.join(scriptDir, '..');
 const swiftFile = path.join(scriptDir, 'confetti.swift');
+const assetsDir = path.join(projectRoot, 'assets');
 
 const env = {
   ...process.env,
@@ -66,6 +68,7 @@ const env = {
     Object.entries(DEFAULTS).map(([k, v]) => [k, process.env[k] ?? v])
   ),
   ...parseInlineArgs(),
+  CONFETTI_ASSETS_DIR: process.env.CONFETTI_ASSETS_DIR || assetsDir,
 };
 
 const child = spawn('swift', [swiftFile], { env, stdio: 'inherit' });
